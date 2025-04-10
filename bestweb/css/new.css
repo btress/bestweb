@@ -1,0 +1,13 @@
+
+.buttonHover:hover{
+    background-color: rgb(212, 105, 17);
+    transform:scale(1.09);
+    transition-duration: 0.5s;
+}
+
+.buttonHover1:hover{
+    transform:scale(1.09);
+    background-color: rgb(95, 212, 173);
+    transition-duration: 0.5s;
+}
+
