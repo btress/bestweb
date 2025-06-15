@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -131,9 +129,22 @@
             color: #212529;
         }
         
+        .btn-warning:hover {
+            background: #e0a800;
+        }
+        
         .btn-danger {
             background: #dc3545;
             color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #c82333;
+        }
+        
+        .btn-sm {
+            padding: 5px 10px;
+            font-size: 12px;
         }
         
         .search-box {
@@ -410,8 +421,8 @@
                             <th>Tên sản phẩm</th>
                             <th>Loại</th>
                             <th>Đơn vị</th>
-                            <th>Giá nhập</th>
-                            <th>Giá bán</th>
+                            <!-- <th>Giá nhập</th>
+                            <th>Giá bán</th> -->
                             <th>Nhà cung cấp</th>
                             <th>Thao tác</th>
                         </tr>
@@ -426,6 +437,7 @@
             <div class="toolbar">
                 <input type="text" class="search-box" placeholder="Tìm kiếm tồn kho..." onkeyup="searchTable('inventory-table', this.value)">
                 <button class="btn btn-warning" onclick="showLowStock()">⚠️ Cảnh báo tồn kho</button>
+                <button class="btn btn-primary" onclick="showModal('update-inventory-modal')">🔄 Cập nhật tồn kho</button>
             </div>
             <div class="table-container">
                 <table id="inventory-table">
@@ -439,6 +451,7 @@
                             <th>Ngày hết hạn</th>
                             <th>Vị trí</th>
                             <th>Trạng thái</th>
+                            <th>Thao tác</th>
                         </tr>
                     </thead>
                     <tbody></tbody>
@@ -464,6 +477,7 @@
                             <th>Thành tiền</th>
                             <th>Nhà cung cấp</th>
                             <th>Ghi chú</th>
+                            <th>Thao tác</th>
                         </tr>
                     </thead>
                     <tbody></tbody>
@@ -488,6 +502,7 @@
                             <th>Lý do</th>
                             <th>Người xuất</th>
                             <th>Ghi chú</th>
+                            <th>Thao tác</th>
                         </tr>
                     </thead>
                     <tbody></tbody>
@@ -524,6 +539,7 @@
             <div class="toolbar">
                 <button class="btn btn-primary" onclick="exportExcel()">📊 Xuất Excel</button>
                 <button class="btn btn-success" onclick="generateReport()">📈 Tạo báo cáo</button>
+                <button class="btn btn-warning" onclick="showModal('filter-report-modal')">🔍 Lọc báo cáo</button>
             </div>
             <div class="summary-cards">
                 <div class="card">
@@ -547,6 +563,21 @@
                     <div class="label">Hợp tác nhiều</div>
                 </div>
             </div>
+            <div class="table-container">
+                <table id="report-table">
+                    <thead>
+                        <tr>
+                            <th>Sản phẩm</th>
+                            <th>Tồn đầu kỳ</th>
+                            <th>Nhập trong kỳ</th>
+                            <th>Xuất trong kỳ</th>
+                            <th>Tồn cuối kỳ</th>
+                            <th>Giá trị tồn kho</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
         </div>
     </div>
     
@@ -560,15 +591,15 @@
                 <div class="form-grid">
                     <div class="form-group">
                         <label>Mã sản phẩm:</label>
-                        <input type="text" name="productId" required>
+                        <input type="text" name="productId" class="input-field" required>
                     </div>
                     <div class="form-group">
                         <label>Tên sản phẩm:</label>
-                        <input type="text" name="productName" required>
+                        <input type="text" name="productName" class="input-field" required>
                     </div>
                     <div class="form-group">
                         <label>Loại sản phẩm:</label>
-                        <select name="category" required>
+                        <select name="category" class="input-field" required>
                             <option value="">Chọn loại</option>
                             <option value="Cafe">Cafe</option>
                             <option value="Trà">Trà</option>
@@ -579,7 +610,7 @@
                     </div>
                     <div class="form-group">
                         <label>Đơn vị tính:</label>
-                        <select name="unit" required>
+                        <select name="unit" class="input-field" required>
                             <option value="">Chọn đơn vị</option>
                             <option value="kg">kg</option>
                             <option value="g">g</option>
@@ -592,20 +623,116 @@
                     </div>
                     <div class="form-group">
                         <label>Giá nhập:</label>
-                        <input type="number" name="costPrice" required>
+                        <input type="number" name="costPrice" class="input-field" required>
                     </div>
                     <div class="form-group">
                         <label>Giá bán:</label>
-                        <input type="number" name="salePrice" required>
+                        <input type="number" name="salePrice" class="input-field" required>
                     </div>
                     <div class="form-group">
                         <label>Nhà cung cấp:</label>
-                        <select name="supplier" required>
+                        <select name="supplier" class="input-field" required>
                             <option value="">Chọn NCC</option>
                         </select>
                     </div>
                 </div>
                 <button type="submit" class="btn btn-primary">Thêm sản phẩm</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Edit Product Modal -->
+    <div id="edit-product-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="hideModal('edit-product-modal')">&times;</span>
+            <h2>Sửa sản phẩm</h2>
+            <form onsubmit="updateProduct(event)">
+                <input type="hidden" name="editProductId">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Tên sản phẩm:</label>
+                        <input type="text" name="editProductName" class="input-field" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Loại sản phẩm:</label>
+                        <select name="editCategory" class="input-field" required>
+                            <option value="">Chọn loại</option>
+                            <option value="Cafe">Cafe</option>
+                            <option value="Trà">Trà</option>
+                            <option value="Bánh ngọt">Bánh ngọt</option>
+                            <option value="Nguyên liệu">Nguyên liệu</option>
+                            <option value="Đồ uống">Đồ uống</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Đơn vị tính:</label>
+                        <select name="editUnit" class="input-field" required>
+                            <option value="">Chọn đơn vị</option>
+                            <option value="kg">kg</option>
+                            <option value="g">g</option>
+                            <option value="lít">lít</option>
+                            <option value="ml">ml</option>
+                            <option value="hộp">hộp</option>
+                            <option value="bao">bao</option>
+                            <option value="cái">cái</option>
+                        </select>
+                    </div>
+                    <!-- <div class="form-group">
+                        <label>Giá nhập:</label>
+                        <input type="number" name="editCostPrice" class="input-field" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Giá bán:</label>
+                        <input type="number" name="editSalePrice" class="input-field" required>
+                    </div> -->
+                    <div class="form-group">
+                        <label>Nhà cung cấp:</label>
+                        <select name="editSupplier" class="input-field" required>
+                            <option value="">Chọn NCC</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Cập nhật</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Update Inventory Modal -->
+    <div id="update-inventory-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="hideModal('update-inventory-modal')">&times;</span>
+            <h2>Cập nhật tồn kho</h2>
+            <form onsubmit="updateInventoryItem(event)">
+                <input type="hidden" name="inventoryProductId">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Sản phẩm:</label>
+                        <select name="inventoryProduct" class="input-field" required>
+                            <option value="">Chọn sản phẩm</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Số lượng hiện tại:</label>
+                        <input type="number" name="currentStock" class="input-field" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Số lượng tối thiểu:</label>
+                        <input type="number" name="minStock" class="input-field" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Số lượng tối đa:</label>
+                        <input type="number" name="maxStock" class="input-field" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Ngày hết hạn:</label>
+                        <input type="date" name="expiryDate" class="input-field">
+                    </div>
+                    <div class="form-group">
+                        <label>Vị trí lưu kho:</label>
+                        <input type="text" name="location" class="input-field">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Cập nhật</button>
             </form>
         </div>
     </div>
@@ -619,38 +746,80 @@
                 <div class="form-grid">
                     <div class="form-group">
                         <label>Mã phiếu nhập:</label>
-                        <input type="text" name="receiptId" required>
+                        <input type="text" name="receiptId" class="input-field" required>
                     </div>
                     <div class="form-group">
                         <label>Sản phẩm:</label>
-                        <select name="productId" required>
+                        <select name="productId" class="input-field" required>
                             <option value="">Chọn sản phẩm</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label>Số lượng:</label>
-                        <input type="number" name="quantity" required>
+                        <input type="number" name="quantity" class="input-field" required>
                     </div>
                     <div class="form-group">
                         <label>Giá nhập:</label>
-                        <input type="number" name="price" required>
+                        <input type="number" name="price" class="input-field" required>
                     </div>
                     <div class="form-group">
                         <label>Nhà cung cấp:</label>
-                        <select name="supplier" required>
+                        <select name="supplier" class="input-field" required>
                             <option value="">Chọn NCC</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label>Ngày hết hạn:</label>
-                        <input type="date" name="expiryDate">
+                        <input type="date" name="expiryDate" class="input-field">
                     </div>
                     <div class="form-group">
                         <label>Ghi chú:</label>
-                        <textarea name="notes" rows="3"></textarea>
+                        <textarea name="notes" rows="3" class="input-field"></textarea>
                     </div>
                 </div>
                 <button type="submit" class="btn btn-success">Nhập kho</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Edit Stock In Modal -->
+    <div id="edit-stock-in-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="hideModal('edit-stock-in-modal')">&times;</span>
+            <h2>Sửa phiếu nhập kho</h2>
+            <form onsubmit="updateStockIn(event)">
+                <input type="hidden" name="editReceiptId">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Sản phẩm:</label>
+                        <select name="editProductId" class="input-field" required disabled>
+                            <option value="">Chọn sản phẩm</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Số lượng:</label>
+                        <input type="number" name="editQuantity" class="input-field" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Giá nhập:</label>
+                        <input type="number" name="editPrice" class="input-field" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Nhà cung cấp:</label>
+                        <select name="editSupplier" class="input-field" required>
+                            <option value="">Chọn NCC</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Ngày hết hạn:</label>
+                        <input type="date" name="editExpiryDate" class="input-field">
+                    </div>
+                    <div class="form-group">
+                        <label>Ghi chú:</label>
+                        <textarea name="editNotes" rows="3" class="input-field"></textarea>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-success">Cập nhật</button>
             </form>
         </div>
     </div>
@@ -664,21 +833,21 @@
                 <div class="form-grid">
                     <div class="form-group">
                         <label>Mã phiếu xuất:</label>
-                        <input type="text" name="issueId" required>
+                        <input type="text" name="issueId" class="input-field" required>
                     </div>
                     <div class="form-group">
                         <label>Sản phẩm:</label>
-                        <select name="productId" required>
+                        <select name="productId" class="input-field" required>
                             <option value="">Chọn sản phẩm</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label>Số lượng:</label>
-                        <input type="number" name="quantity" required>
+                        <input type="number" name="quantity" class="input-field" required>
                     </div>
                     <div class="form-group">
                         <label>Lý do xuất:</label>
-                        <select name="reason" required>
+                        <select name="reason" class="input-field" required>
                             <option value="">Chọn lý do</option>
                             <option value="Bán hàng">Bán hàng</option>
                             <option value="Hư hỏng">Hư hỏng</option>
@@ -689,14 +858,57 @@
                     </div>
                     <div class="form-group">
                         <label>Người xuất:</label>
-                        <input type="text" name="issuedBy" required>
+                        <input type="text" name="issuedBy" class="input-field" required>
                     </div>
                     <div class="form-group">
                         <label>Ghi chú:</label>
-                        <textarea name="notes" rows="3"></textarea>
+                        <textarea name="notes" rows="3" class="input-field"></textarea>
                     </div>
                 </div>
                 <button type="submit" class="btn btn-danger">Xuất kho</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Edit Stock Out Modal -->
+    <div id="edit-stock-out-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="hideModal('edit-stock-out-modal')">&times;</span>
+            <h2>Sửa phiếu xuất kho</h2>
+            <form onsubmit="updateStockOut(event)">
+                <input type="hidden" name="editIssueId">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Sản phẩm:</label>
+                        <select name="editProductId" class="input-field" required disabled>
+                            <option value="">Chọn sản phẩm</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Số lượng:</label>
+                        <input type="number" name="editQuantity" class="input-field" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Lý do xuất:</label>
+                        <select name="editReason" class="input-field" required>
+                            <option value="">Chọn lý do</option>
+                            <option value="Bán hàng">Bán hàng</option>
+                            <option value="Hư hỏng">Hư hỏng</option>
+                            <option value="Hết hạn">Hết hạn</option>
+                            <option value="Khuyến mãi">Khuyến mãi</option>
+                            <option value="Sử dụng nội bộ">Sử dụng nội bộ</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Người xuất:</label>
+                        <input type="text" name="editIssuedBy" class="input-field" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Ghi chú:</label>
+                        <textarea name="editNotes" rows="3" class="input-field"></textarea>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-danger">Cập nhật</button>
             </form>
         </div>
     </div>
@@ -710,30 +922,97 @@
                 <div class="form-grid">
                     <div class="form-group">
                         <label>Mã nhà cung cấp:</label>
-                        <input type="text" name="supplierId" required>
+                        <input type="text" name="supplierId" class="input-field" required>
                     </div>
                     <div class="form-group">
                         <label>Tên công ty:</label>
-                        <input type="text" name="companyName" required>
+                        <input type="text" name="companyName" class="input-field" required>
                     </div>
                     <div class="form-group">
                         <label>Người liên hệ:</label>
-                        <input type="text" name="contactPerson" required>
+                        <input type="text" name="contactPerson" class="input-field" required>
                     </div>
                     <div class="form-group">
                         <label>Số điện thoại:</label>
-                        <input type="tel" name="phone" required>
+                        <input type="tel" name="phone" class="input-field" required>
                     </div>
                     <div class="form-group">
                         <label>Email:</label>
-                        <input type="email" name="email">
+                        <input type="email" name="email" class="input-field">
                     </div>
                     <div class="form-group">
                         <label>Địa chỉ:</label>
-                        <textarea name="address" rows="3"></textarea>
+                        <textarea name="address" rows="3" class="input-field"></textarea>
                     </div>
                 </div>
                 <button type="submit" class="btn btn-primary">Thêm nhà cung cấp</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Edit Supplier Modal -->
+    <div id="edit-supplier-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="hideModal('edit-supplier-modal')">&times;</span>
+            <h2>Sửa nhà cung cấp</h2>
+            <form onsubmit="updateSupplier(event)">
+                <input type="hidden" name="editSupplierId">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Tên công ty:</label>
+                        <input type="text" name="editCompanyName" class="input-field" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Người liên hệ:</label>
+                        <input type="text" name="editContactPerson" class="input-field" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Số điện thoại:</label>
+                        <input type="tel" name="editPhone" class="input-field" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email:</label>
+                        <input type="email" name="editEmail" class="input-field">
+                    </div>
+                    <div class="form-group">
+                        <label>Địa chỉ:</label>
+                        <textarea name="editAddress" rows="3" class="input-field"></textarea>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Cập nhật</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Filter Report Modal -->
+    <div id="filter-report-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="hideModal('filter-report-modal')">&times;</span>
+            <h2>Lọc báo cáo</h2>
+            <form onsubmit="filterReport(event)">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Từ ngày:</label>
+                        <input type="date" name="fromDate" class="input-field">
+                    </div>
+                    <div class="form-group">
+                        <label>Đến ngày:</label>
+                        <input type="date" name="toDate" class="input-field">
+                    </div>
+                    <div class="form-group">
+                        <label>Sản phẩm:</label>
+                        <select name="reportProduct" class="input-field">
+                            <option value="">Tất cả sản phẩm</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Nhà cung cấp:</label>
+                        <select name="reportSupplier" class="input-field">
+                            <option value="">Tất cả nhà cung cấp</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Áp dụng</button>
             </form>
         </div>
     </div>
@@ -741,11 +1020,11 @@
     <script>
         // Sample data
         let products = [
-            {id: 'CF001', name: 'Cà phê Arabica', category: 'Cafe', unit: 'kg', costPrice: 180000, salePrice: 250000, supplier: 'NCC001'},
-            {id: 'CF002', name: 'Cà phê Robusta', category: 'Cafe', unit: 'kg', costPrice: 120000, salePrice: 180000, supplier: 'NCC001'},
-            {id: 'TR001', name: 'Trà xanh Thái Nguyên', category: 'Trà', unit: 'kg', costPrice: 300000, salePrice: 450000, supplier: 'NCC002'},
-            {id: 'BK001', name: 'Bánh croissant', category: 'Bánh ngọt', unit: 'cái', costPrice: 8000, salePrice: 15000, supplier: 'NCC003'},
-            {id: 'SU001', name: 'Đường trắng', category: 'Nguyên liệu', unit: 'kg', costPrice: 20000, salePrice: 25000, supplier: 'NCC004'}
+            {id: 'CF001', name: 'Cà phê Arabica', category: 'Cafe', unit: 'kg', supplier: 'NCC001'},
+            {id: 'CF002', name: 'Cà phê Robusta', category: 'Cafe', unit: 'kg', supplier: 'NCC001'},
+            {id: 'TR001', name: 'Trà xanh Thái Nguyên', category: 'Trà', unit: 'kg', supplier: 'NCC002'},
+            {id: 'BK001', name: 'Bánh croissant', category: 'Bánh ngọt', unit: 'cái', supplier: 'NCC003'},
+            {id: 'SU001', name: 'Đường trắng', category: 'Nguyên liệu', unit: 'kg', supplier: 'NCC004'}
         ];
         
         let suppliers = [
@@ -835,7 +1114,7 @@
         
         // Load options for dropdowns
         function loadSupplierOptions() {
-            const selects = document.querySelectorAll('select[name="supplier"]');
+            const selects = document.querySelectorAll('select[name="supplier"], select[name="editSupplier"], select[name="reportSupplier"]');
             selects.forEach(select => {
                 select.innerHTML = '<option value="">Chọn NCC</option>';
                 suppliers.forEach(supplier => {
@@ -848,7 +1127,7 @@
         }
         
         function loadProductOptions() {
-            const selects = document.querySelectorAll('select[name="productId"]');
+            const selects = document.querySelectorAll('select[name="productId"], select[name="editProductId"], select[name="inventoryProduct"], select[name="reportProduct"]');
             selects.forEach(select => {
                 select.innerHTML = '<option value="">Chọn sản phẩm</option>';
                 products.forEach(product => {
@@ -873,15 +1152,15 @@
                     <td>${product.name}</td>
                     <td>${product.category}</td>
                     <td>${product.unit}</td>
-                    <td>${formatCurrency(product.costPrice)}</td>
-                    <td>${formatCurrency(product.salePrice)}</td>
                     <td>${supplier ? supplier.name : 'N/A'}</td>
                     <td>
-                        <button class="btn btn-warning" onclick="editProduct('${product.id}')">Sửa</button>
-                        <button class="btn btn-danger" onclick="deleteProduct('${product.id}')">Xóa</button>
-                    </td>
-                `;
-                tbody.appendChild(row);
+                        <button class="btn btn-warning btn-sm" onclick="editProduct('${product.id}')">Sửa</button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteProduct('${product.id}')">Xóa</button>
+                        </td>
+                        `;
+                        tbody.appendChild(row);
+                        // <td>${formatCurrency(product.costPrice)}</td>
+                        // <td>${formatCurrency(product.salePrice)}</td>
             });
         }
         
@@ -926,6 +1205,9 @@
                     <td>${item.expiryDate || 'N/A'}</td>
                     <td>${item.location}</td>
                     <td>${statusText}</td>
+                    <td>
+                        <button class="btn btn-warning btn-sm" onclick="editInventory('${item.productId}')">Sửa</button>
+                    </td>
                 `;
                 tbody.appendChild(row);
             });
@@ -950,6 +1232,10 @@
                     <td>${formatCurrency(total)}</td>
                     <td>${supplier ? supplier.name : 'N/A'}</td>
                     <td>${item.notes || ''}</td>
+                    <td>
+                        <button class="btn btn-warning btn-sm" onclick="editStockIn('${item.receiptId}')">Sửa</button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteStockIn('${item.receiptId}')">Xóa</button>
+                    </td>
                 `;
                 tbody.appendChild(row);
             });
@@ -971,6 +1257,10 @@
                     <td>${item.reason}</td>
                     <td>${item.issuedBy}</td>
                     <td>${item.notes || ''}</td>
+                    <td>
+                        <button class="btn btn-warning btn-sm" onclick="editStockOut('${item.issueId}')">Sửa</button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteStockOut('${item.issueId}')">Xóa</button>
+                    </td>
                 `;
                 tbody.appendChild(row);
             });
@@ -990,9 +1280,67 @@
                     <td>${supplier.email || ''}</td>
                     <td>${supplier.address || ''}</td>
                     <td>
-                        <button class="btn btn-warning" onclick="editSupplier('${supplier.id}')">Sửa</button>
-                        <button class="btn btn-danger" onclick="deleteSupplier('${supplier.id}')">Xóa</button>
+                        <button class="btn btn-warning btn-sm" onclick="editSupplier('${supplier.id}')">Sửa</button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteSupplier('${supplier.id}')">Xóa</button>
                     </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+        
+        function renderReportTable(filter = {}) {
+            const tbody = document.querySelector('#report-table tbody');
+            tbody.innerHTML = '';
+            
+            // Filter data if needed
+            let filteredStockIn = [...stockIn];
+            let filteredStockOut = [...stockOut];
+            
+            if (filter.fromDate) {
+                filteredStockIn = filteredStockIn.filter(item => new Date(item.date) >= new Date(filter.fromDate));
+                filteredStockOut = filteredStockOut.filter(item => new Date(item.date) >= new Date(filter.fromDate));
+            }
+            
+            if (filter.toDate) {
+                filteredStockIn = filteredStockIn.filter(item => new Date(item.date) <= new Date(filter.toDate));
+                filteredStockOut = filteredStockOut.filter(item => new Date(item.date) <= new Date(filter.toDate));
+            }
+            
+            if (filter.productId) {
+                filteredStockIn = filteredStockIn.filter(item => item.productId === filter.productId);
+                filteredStockOut = filteredStockOut.filter(item => item.productId === filter.productId);
+            }
+            
+            if (filter.supplierId) {
+                filteredStockIn = filteredStockIn.filter(item => item.supplier === filter.supplierId);
+            }
+            
+            // Calculate report data
+            products.forEach(product => {
+                // Check if we should include this product based on filters
+                if (filter.productId && product.id !== filter.productId) return;
+                
+                const stockInForProduct = filteredStockIn.filter(item => item.productId === product.id);
+                const stockOutForProduct = filteredStockOut.filter(item => item.productId === product.id);
+                
+                const totalIn = stockInForProduct.reduce((sum, item) => sum + item.quantity, 0);
+                const totalOut = stockOutForProduct.reduce((sum, item) => sum + item.quantity, 0);
+                
+                const invItem = inventory.find(i => i.productId === product.id);
+                const currentStock = invItem ? invItem.currentStock : 0;
+                
+                // For demo purposes, we'll assume beginning stock is current stock + out - in
+                const beginningStock = currentStock + totalOut - totalIn;
+                const inventoryValue = currentStock * product.costPrice;
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${product.name}</td>
+                    <td>${beginningStock}</td>
+                    <td>${totalIn}</td>
+                    <td>${totalOut}</td>
+                    <td>${currentStock}</td>
+                    <td>${formatCurrency(inventoryValue)}</td>
                 `;
                 tbody.appendChild(row);
             });
@@ -1004,6 +1352,7 @@
             renderStockInTable();
             renderStockOutTable();
             renderSuppliersTable();
+            renderReportTable();
         }
         
         // Add functions
@@ -1155,6 +1504,416 @@
             alert('Thêm nhà cung cấp thành công!');
         }
         
+        // Edit functions
+        function editProduct(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product) {
+                alert('Không tìm thấy sản phẩm!');
+                return;
+            }
+
+            // Fill the form
+            const form = document.querySelector('#edit-product-modal form');
+            form.querySelector('input[name="editProductId"]').value = product.id;
+            form.querySelector('input[name="editProductName"]').value = product.name;
+            form.querySelector('select[name="editCategory"]').value = product.category;
+            form.querySelector('select[name="editUnit"]').value = product.unit;
+            // form.querySelector('input[name="editCostPrice"]').value = product.costPrice;
+            // form.querySelector('input[name="editSalePrice"]').value = product.salePrice;
+            
+            // Load supplier options and select current supplier
+            const supplierSelect = form.querySelector('select[name="editSupplier"]');
+            supplierSelect.innerHTML = '<option value="">Chọn NCC</option>';
+            suppliers.forEach(supplier => {
+                const option = document.createElement('option');
+                option.value = supplier.id;
+                option.textContent = supplier.name;
+                supplierSelect.appendChild(option);
+            });
+            supplierSelect.value = product.supplier;
+
+            showModal('edit-product-modal');
+        }
+
+        function updateProduct(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const productId = formData.get('editProductId');
+
+            const updatedProduct = {
+                id: productId,
+                name: formData.get('editProductName'),
+                category: formData.get('editCategory'),
+                unit: formData.get('editUnit'),
+                costPrice: parseFloat(formData.get('editCostPrice')),
+                salePrice: parseFloat(formData.get('editSalePrice')),
+                supplier: formData.get('editSupplier')
+            };
+
+            // Update product
+            const index = products.findIndex(p => p.id === productId);
+            if (index !== -1) {
+                products[index] = updatedProduct;
+            }
+
+            renderAllTables();
+            loadProductOptions();
+            hideModal('edit-product-modal');
+            alert('Cập nhật sản phẩm thành công!');
+        }
+        
+        function editInventory(productId) {
+            const invItem = inventory.find(i => i.productId === productId);
+            if (!invItem) {
+                alert('Không tìm thấy tồn kho cho sản phẩm này!');
+                return;
+            }
+
+            // Fill the form
+            const form = document.querySelector('#update-inventory-modal form');
+            form.querySelector('input[name="inventoryProductId"]').value = invItem.productId;
+            
+            // Load product options and select current product
+            const productSelect = form.querySelector('select[name="inventoryProduct"]');
+            productSelect.innerHTML = '<option value="">Chọn sản phẩm</option>';
+            products.forEach(product => {
+                const option = document.createElement('option');
+                option.value = product.id;
+                option.textContent = `${product.id} - ${product.name}`;
+                productSelect.appendChild(option);
+            });
+            productSelect.value = invItem.productId;
+            
+            // Fill other fields
+            form.querySelector('input[name="currentStock"]').value = invItem.currentStock;
+            form.querySelector('input[name="minStock"]').value = invItem.minStock;
+            form.querySelector('input[name="maxStock"]').value = invItem.maxStock;
+            form.querySelector('input[name="expiryDate"]').value = invItem.expiryDate || '';
+            form.querySelector('input[name="location"]').value = invItem.location || '';
+
+            showModal('update-inventory-modal');
+        }
+
+        function updateInventoryItem(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const productId = formData.get('inventoryProductId');
+
+            const updatedInventory = {
+                productId: productId,
+                currentStock: parseInt(formData.get('currentStock')),
+                minStock: parseInt(formData.get('minStock')),
+                maxStock: parseInt(formData.get('maxStock')),
+                expiryDate: formData.get('expiryDate') || null,
+                location: formData.get('location') || 'Chưa phân bổ',
+                lastUpdated: new Date().toISOString().split('T')[0]
+            };
+
+            // Update inventory
+            const index = inventory.findIndex(i => i.productId === productId);
+            if (index !== -1) {
+                inventory[index] = updatedInventory;
+            }
+
+            renderAllTables();
+            updateDashboard();
+            hideModal('update-inventory-modal');
+            alert('Cập nhật tồn kho thành công!');
+        }
+        
+        function editStockIn(receiptId) {
+            const stockInItem = stockIn.find(s => s.receiptId === receiptId);
+            if (!stockInItem) {
+                alert('Không tìm thấy phiếu nhập kho!');
+                return;
+            }
+
+            // Fill the form
+            const form = document.querySelector('#edit-stock-in-modal form');
+            form.querySelector('input[name="editReceiptId"]').value = stockInItem.receiptId;
+            
+            // Load product options and select current product
+            const productSelect = form.querySelector('select[name="editProductId"]');
+            productSelect.innerHTML = '<option value="">Chọn sản phẩm</option>';
+            products.forEach(product => {
+                const option = document.createElement('option');
+                option.value = product.id;
+                option.textContent = `${product.id} - ${product.name}`;
+                productSelect.appendChild(option);
+            });
+            productSelect.value = stockInItem.productId;
+            
+            // Load supplier options and select current supplier
+            const supplierSelect = form.querySelector('select[name="editSupplier"]');
+            supplierSelect.innerHTML = '<option value="">Chọn NCC</option>';
+            suppliers.forEach(supplier => {
+                const option = document.createElement('option');
+                option.value = supplier.id;
+                option.textContent = supplier.name;
+                supplierSelect.appendChild(option);
+            });
+            supplierSelect.value = stockInItem.supplier;
+            
+            // Fill other fields
+            form.querySelector('input[name="editQuantity"]').value = stockInItem.quantity;
+            form.querySelector('input[name="editPrice"]').value = stockInItem.price;
+            form.querySelector('input[name="editExpiryDate"]').value = stockInItem.expiryDate || '';
+            form.querySelector('textarea[name="editNotes"]').value = stockInItem.notes || '';
+
+            showModal('edit-stock-in-modal');
+        }
+
+        function updateStockIn(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const receiptId = formData.get('editReceiptId');
+
+            const updatedStockIn = {
+                receiptId: receiptId,
+                date: new Date().toISOString().split('T')[0],
+                productId: formData.get('editProductId'),
+                quantity: parseInt(formData.get('editQuantity')),
+                price: parseFloat(formData.get('editPrice')),
+                supplier: formData.get('editSupplier'),
+                notes: formData.get('editNotes')
+            };
+
+            // Update stock in
+            const index = stockIn.findIndex(s => s.receiptId === receiptId);
+            if (index !== -1) {
+                // Calculate difference to update inventory
+                const oldQuantity = stockIn[index].quantity;
+                const newQuantity = updatedStockIn.quantity;
+                const diff = newQuantity - oldQuantity;
+                
+                stockIn[index] = updatedStockIn;
+                
+                // Update inventory
+                const invItem = inventory.find(i => i.productId === updatedStockIn.productId);
+                if (invItem) {
+                    invItem.currentStock += diff;
+                    invItem.lastUpdated = new Date().toISOString().split('T')[0];
+                    
+                    if (formData.get('editExpiryDate')) {
+                        invItem.expiryDate = formData.get('editExpiryDate');
+                    }
+                }
+            }
+
+            renderAllTables();
+            updateDashboard();
+            hideModal('edit-stock-in-modal');
+            alert('Cập nhật phiếu nhập kho thành công!');
+        }
+        
+        function editStockOut(issueId) {
+            const stockOutItem = stockOut.find(s => s.issueId === issueId);
+            if (!stockOutItem) {
+                alert('Không tìm thấy phiếu xuất kho!');
+                return;
+            }
+
+            // Fill the form
+            const form = document.querySelector('#edit-stock-out-modal form');
+            form.querySelector('input[name="editIssueId"]').value = stockOutItem.issueId;
+            
+            // Load product options and select current product
+            const productSelect = form.querySelector('select[name="editProductId"]');
+            productSelect.innerHTML = '<option value="">Chọn sản phẩm</option>';
+            products.forEach(product => {
+                const option = document.createElement('option');
+                option.value = product.id;
+                option.textContent = `${product.id} - ${product.name}`;
+                productSelect.appendChild(option);
+            });
+            productSelect.value = stockOutItem.productId;
+            
+            // Fill other fields
+            form.querySelector('input[name="editQuantity"]').value = stockOutItem.quantity;
+            form.querySelector('select[name="editReason"]').value = stockOutItem.reason;
+            form.querySelector('input[name="editIssuedBy"]').value = stockOutItem.issuedBy;
+            form.querySelector('textarea[name="editNotes"]').value = stockOutItem.notes || '';
+
+            showModal('edit-stock-out-modal');
+        }
+
+        function updateStockOut(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const issueId = formData.get('editIssueId');
+
+            const updatedStockOut = {
+                issueId: issueId,
+                date: new Date().toISOString().split('T')[0],
+                productId: formData.get('editProductId'),
+                quantity: parseInt(formData.get('editQuantity')),
+                reason: formData.get('editReason'),
+                issuedBy: formData.get('editIssuedBy'),
+                notes: formData.get('editNotes')
+            };
+
+            // Update stock out
+            const index = stockOut.findIndex(s => s.issueId === issueId);
+            if (index !== -1) {
+                // Calculate difference to update inventory
+                const oldQuantity = stockOut[index].quantity;
+                const newQuantity = updatedStockOut.quantity;
+                const diff = newQuantity - oldQuantity;
+                
+                stockOut[index] = updatedStockOut;
+                
+                // Update inventory
+                const invItem = inventory.find(i => i.productId === updatedStockOut.productId);
+                if (invItem) {
+                    invItem.currentStock -= diff; // Subtract the difference
+                    invItem.lastUpdated = new Date().toISOString().split('T')[0];
+                }
+            }
+
+            renderAllTables();
+            updateDashboard();
+            hideModal('edit-stock-out-modal');
+            alert('Cập nhật phiếu xuất kho thành công!');
+        }
+        
+        function editSupplier(supplierId) {
+            const supplier = suppliers.find(s => s.id === supplierId);
+            if (!supplier) {
+                alert('Không tìm thấy nhà cung cấp!');
+                return;
+            }
+
+            // Fill the form
+            const form = document.querySelector('#edit-supplier-modal form');
+            form.querySelector('input[name="editSupplierId"]').value = supplier.id;
+            form.querySelector('input[name="editCompanyName"]').value = supplier.name;
+            form.querySelector('input[name="editContactPerson"]').value = supplier.contact;
+            form.querySelector('input[name="editPhone"]').value = supplier.phone;
+            form.querySelector('input[name="editEmail"]').value = supplier.email || '';
+            form.querySelector('textarea[name="editAddress"]').value = supplier.address || '';
+
+            showModal('edit-supplier-modal');
+        }
+
+        function updateSupplier(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const supplierId = formData.get('editSupplierId');
+
+            const updatedSupplier = {
+                id: supplierId,
+                name: formData.get('editCompanyName'),
+                contact: formData.get('editContactPerson'),
+                phone: formData.get('editPhone'),
+                email: formData.get('editEmail'),
+                address: formData.get('editAddress')
+            };
+
+            // Update supplier
+            const index = suppliers.findIndex(s => s.id === supplierId);
+            if (index !== -1) {
+                suppliers[index] = updatedSupplier;
+            }
+
+            // Update supplier name in related products
+            products.forEach(product => {
+                if (product.supplier === supplierId) {
+                    product.supplierName = updatedSupplier.name;
+                }
+            });
+
+            renderAllTables();
+            loadSupplierOptions();
+            hideModal('edit-supplier-modal');
+            alert('Cập nhật nhà cung cấp thành công!');
+        }
+        
+        // Delete functions
+        function deleteProduct(productId) {
+            if (confirm(`Bạn có chắc chắn muốn xóa sản phẩm ${productId}?`)) {
+                // Check if product exists in inventory with stock
+                const invItem = inventory.find(i => i.productId === productId);
+                if (invItem && invItem.currentStock > 0) {
+                    alert('Không thể xóa sản phẩm vì vẫn còn tồn kho!');
+                    return;
+                }
+                
+                // Check if product is referenced in stock in/out
+                const hasStockIn = stockIn.some(s => s.productId === productId);
+                const hasStockOut = stockOut.some(s => s.productId === productId);
+                
+                if (hasStockIn || hasStockOut) {
+                    alert('Không thể xóa sản phẩm vì có liên quan đến phiếu nhập/xuất kho!');
+                    return;
+                }
+                
+                products = products.filter(p => p.id !== productId);
+                inventory = inventory.filter(i => i.productId !== productId);
+                renderAllTables();
+                loadProductOptions();
+                updateDashboard();
+                alert('Xóa sản phẩm thành công!');
+            }
+        }
+        
+        function deleteStockIn(receiptId) {
+            if (confirm(`Bạn có chắc chắn muốn xóa phiếu nhập ${receiptId}?`)) {
+                const stockInItem = stockIn.find(s => s.receiptId === receiptId);
+                if (stockInItem) {
+                    // Update inventory (subtract the quantity)
+                    const invItem = inventory.find(i => i.productId === stockInItem.productId);
+                    if (invItem) {
+                        invItem.currentStock -= stockInItem.quantity;
+                    }
+                    
+                    // Delete stock in
+                    stockIn = stockIn.filter(s => s.receiptId !== receiptId);
+                    
+                    renderAllTables();
+                    updateDashboard();
+                    alert('Xóa phiếu nhập thành công!');
+                }
+            }
+        }
+        
+        function deleteStockOut(issueId) {
+            if (confirm(`Bạn có chắc chắn muốn xóa phiếu xuất ${issueId}?`)) {
+                const stockOutItem = stockOut.find(s => s.issueId === issueId);
+                if (stockOutItem) {
+                    // Update inventory (add back the quantity)
+                    const invItem = inventory.find(i => i.productId === stockOutItem.productId);
+                    if (invItem) {
+                        invItem.currentStock += stockOutItem.quantity;
+                    }
+                    
+                    // Delete stock out
+                    stockOut = stockOut.filter(s => s.issueId !== issueId);
+                    
+                    renderAllTables();
+                    updateDashboard();
+                    alert('Xóa phiếu xuất thành công!');
+                }
+            }
+        }
+        
+        function deleteSupplier(supplierId) {
+            if (confirm(`Bạn có chắc chắn muốn xóa nhà cung cấp ${supplierId}?`)) {
+                // Check if supplier is referenced in products
+                const hasProducts = products.some(p => p.supplier === supplierId);
+                const hasStockIn = stockIn.some(s => s.supplier === supplierId);
+                
+                if (hasProducts || hasStockIn) {
+                    alert('Không thể xóa nhà cung cấp vì có sản phẩm hoặc phiếu nhập liên quan!');
+                    return;
+                }
+                
+                suppliers = suppliers.filter(s => s.id !== supplierId);
+                renderSuppliersTable();
+                loadSupplierOptions();
+                alert('Xóa nhà cung cấp thành công!');
+            }
+        }
+        
         // Dashboard functions
         function updateDashboard() {
             // Total products
@@ -1258,6 +2017,24 @@
             
             const topSupplier = suppliers.find(s => s.id === topSupplierId);
             document.getElementById('top-supplier').textContent = topSupplier ? topSupplier.name : '-';
+            
+            // Render report table
+            renderReportTable();
+        }
+        
+        function filterReport(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            
+            const filter = {
+                fromDate: formData.get('fromDate'),
+                toDate: formData.get('toDate'),
+                productId: formData.get('reportProduct'),
+                supplierId: formData.get('reportSupplier')
+            };
+            
+            renderReportTable(filter);
+            hideModal('filter-report-modal');
         }
         
         // Utility functions
@@ -1275,10 +2052,10 @@
                 return;
             }
             
-            let message = 'Các sản phẩm có tồn kho thấp:\\n\\n';
+            let message = 'Các sản phẩm có tồn kho thấp:\n\n';
             lowStockItems.forEach(item => {
                 const product = products.find(p => p.id === item.productId);
-                message += `- ${product ? product.name : item.productId}: ${item.currentStock}/${item.minStock}\\n`;
+                message += `- ${product ? product.name : item.productId}: ${item.currentStock}/${item.minStock}\n`;
             });
             
             alert(message);
@@ -1290,35 +2067,6 @@
         
         function generateReport() {
             alert('Chức năng tạo báo cáo chi tiết sẽ được phát triển trong phiên bản tiếp theo!');
-        }
-        
-        // Edit and Delete functions (placeholders)
-        function editProduct(productId) {
-            alert(`Chức năng sửa sản phẩm ${productId} sẽ được phát triển!`);
-        }
-        
-        function deleteProduct(productId) {
-            if (confirm(`Bạn có chắc chắn muốn xóa sản phẩm ${productId}?`)) {
-                products = products.filter(p => p.id !== productId);
-                inventory = inventory.filter(i => i.productId !== productId);
-                renderAllTables();
-                loadProductOptions();
-                updateDashboard();
-                alert('Xóa sản phẩm thành công!');
-            }
-        }
-        
-        function editSupplier(supplierId) {
-            alert(`Chức năng sửa nhà cung cấp ${supplierId} sẽ được phát triển!`);
-        }
-        
-        function deleteSupplier(supplierId) {
-            if (confirm(`Bạn có chắc chắn muốn xóa nhà cung cấp ${supplierId}?`)) {
-                suppliers = suppliers.filter(s => s.id !== supplierId);
-                renderSuppliersTable();
-                loadSupplierOptions();
-                alert('Xóa nhà cung cấp thành công!');
-            }
         }
         
         // Close modal when clicking outside
