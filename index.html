@@ -1,371 +1,20 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quản lý kho Cafe</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-        
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            overflow: hidden;
-        }
-        
-        .header {
-            background: linear-gradient(45deg, #8B4513, #D2691E);
-            color: white;
-            padding: 30px;
-            text-align: center;
-        }
-        
-        .header h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
-        
-        .header p {
-            font-size: 1.2em;
-            opacity: 0.9;
-        }
-        
-        .tabs {
-            display: flex;
-            background: #f8f9fa;
-            border-bottom: 2px solid #e9ecef;
-            overflow-x: auto;
-        }
-        
-        .tab {
-            padding: 15px 25px;
-            cursor: pointer;
-            border: none;
-            background: transparent;
-            font-size: 14px;
-            font-weight: 600;
-            color: #6c757d;
-            transition: all 0.3s ease;
-            white-space: nowrap;
-            border-bottom: 3px solid transparent;
-        }
-        
-        .tab:hover {
-            background: #e9ecef;
-            color: #495057;
-        }
-        
-        .tab.active {
-            color: #8B4513;
-            border-bottom-color: #8B4513;
-            background: white;
-        }
-        
-        .sheet {
-            display: none;
-            padding: 0;
-        }
-        
-        .sheet.active {
-            display: block;
-        }
-        
-        .toolbar {
-            background: #f8f9fa;
-            padding: 15px 20px;
-            border-bottom: 1px solid #dee2e6;
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-        
-        .btn {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-        
-        .btn-primary {
-            background: #8B4513;
-            color: white;
-        }
-        
-        .btn-primary:hover {
-            background: #654321;
-            transform: translateY(-1px);
-        }
-        
-        .btn-success {
-            background: #28a745;
-            color: white;
-        }
-        
-        .btn-success:hover {
-            background: #218838;
-        }
-        
-        .btn-warning {
-            background: #ffc107;
-            color: #212529;
-        }
-        
-        .btn-warning:hover {
-            background: #e0a800;
-        }
-        
-        .btn-danger {
-            background: #dc3545;
-            color: white;
-        }
-        
-        .btn-danger:hover {
-            background: #c82333;
-        }
-        
-        .btn-sm {
-            padding: 5px 10px;
-            font-size: 12px;
-        }
-        
-        .search-box {
-            padding: 8px 12px;
-            border: 1px solid #ced4da;
-            border-radius: 5px;
-            font-size: 14px;
-            width: 200px;
-        }
-        
-        .table-container {
-            overflow: auto;
-            max-height: 600px;
-            border: 1px solid #dee2e6;
-            margin: 20px;
-            border-radius: 8px;
-        }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-            font-size: 14px;
-        }
-        
-        th {
-            background: linear-gradient(135deg, #8B4513, #A0522D);
-            color: white;
-            padding: 12px 8px;
-            text-align: left;
-            font-weight: 600;
-            position: sticky;
-            top: 0;
-            z-index: 10;
-            border-right: 1px solid #6d4c41;
-        }
-        
-        td {
-            padding: 10px 8px;
-            border-bottom: 1px solid #f8f9fa;
-            border-right: 1px solid #f8f9fa;
-        }
-        
-        tr:hover {
-            background: #f8f9fa;
-        }
-        
-        .status-low {
-            background: #ffebee !important;
-            color: #c62828;
-        }
-        
-        .status-expired {
-            background: #ffcdd2 !important;
-            color: #d32f2f;
-            font-weight: bold;
-        }
-        
-        .status-warning {
-            background: #fff3e0 !important;
-            color: #ef6c00;
-        }
-        
-        .input-field {
-            width: 100%;
-            padding: 6px;
-            border: 1px solid #ced4da;
-            border-radius: 3px;
-            font-size: 13px;
-        }
-        
-        .summary-cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            padding: 20px;
-        }
-        
-        .card {
-            background: white;
-            border-radius: 12px;
-            padding: 25px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            border-left: 5px solid #8B4513;
-            transition: transform 0.3s ease;
-        }
-        
-        .card:hover {
-            transform: translateY(-5px);
-        }
-        
-        .card h3 {
-            color: #8B4513;
-            margin-bottom: 15px;
-            font-size: 1.3em;
-        }
-        
-        .card .number {
-            font-size: 2.5em;
-            font-weight: bold;
-            color: #2c3e50;
-            margin-bottom: 10px;
-        }
-        
-        .card .label {
-            color: #6c757d;
-            font-size: 0.9em;
-        }
-        
-        .alert {
-            margin: 20px;
-            padding: 15px;
-            border-radius: 8px;
-            border-left: 5px solid;
-        }
-        
-        .alert-warning {
-            background: #fff3cd;
-            border-color: #ffc107;
-            color: #856404;
-        }
-        
-        .alert-danger {
-            background: #f8d7da;
-            border-color: #dc3545;
-            color: #721c24;
-        }
-        
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 1000;
-        }
-        
-        .modal-content {
-            background: white;
-            margin: 5% auto;
-            padding: 30px;
-            border-radius: 12px;
-            width: 90%;
-            max-width: 600px;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-        
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-        
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .form-group label {
-            margin-bottom: 5px;
-            font-weight: 600;
-            color: #495057;
-        }
-        
-        .close {
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-            color: #aaa;
-        }
-        
-        .close:hover {
-            color: #000;
-        }
-        
-        @media (max-width: 768px) {
-            .container {
-                margin: 10px;
-                border-radius: 10px;
-            }
-            
-            .header {
-                padding: 20px;
-            }
-            
-            .header h1 {
-                font-size: 2em;
-            }
-            
-            .tabs {
-                flex-wrap: wrap;
-            }
-            
-            .tab {
-                flex: 1;
-                min-width: 120px;
-            }
-            
-            .toolbar {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            
-            .summary-cards {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="css.css">
 </head>
+
 <body>
     <div class="container">
         <div class="header">
             <h1>☕ Quản lý kho Cafe</h1>
             <p>Hệ thống quản lý tồn kho chuyên nghiệp</p>
         </div>
-        
+
         <div class="tabs">
             <button class="tab active" onclick="showSheet('dashboard')">📊 Dashboard</button>
             <button class="tab" onclick="showSheet('products')">📦 Sản phẩm</button>
@@ -375,7 +24,7 @@
             <button class="tab" onclick="showSheet('suppliers')">🏢 Nhà cung cấp</button>
             <button class="tab" onclick="showSheet('reports')">📈 Báo cáo</button>
         </div>
-        
+
         <!-- Dashboard -->
         <div id="dashboard" class="sheet active">
             <div class="summary-cards">
@@ -400,18 +49,19 @@
                     <div class="label">Trong 7 ngày</div>
                 </div>
             </div>
-            
+
             <div class="alert alert-warning" id="alerts" style="display: none;">
                 <strong>⚠️ Cảnh báo!</strong>
                 <ul id="alert-list"></ul>
             </div>
         </div>
-        
+
         <!-- Products -->
         <div id="products" class="sheet">
             <div class="toolbar">
                 <button class="btn btn-primary" onclick="showModal('add-product-modal')">➕ Thêm sản phẩm</button>
-                <input type="text" class="search-box" placeholder="Tìm kiếm sản phẩm..." onkeyup="searchTable('products-table', this.value)">
+                <input type="text" class="search-box" placeholder="Tìm kiếm sản phẩm..."
+                    onkeyup="searchTable('products-table', this.value)">
             </div>
             <div class="table-container">
                 <table id="products-table">
@@ -431,13 +81,15 @@
                 </table>
             </div>
         </div>
-        
+
         <!-- Inventory -->
         <div id="inventory" class="sheet">
             <div class="toolbar">
-                <input type="text" class="search-box" placeholder="Tìm kiếm tồn kho..." onkeyup="searchTable('inventory-table', this.value)">
+                <input type="text" class="search-box" placeholder="Tìm kiếm tồn kho..."
+                    onkeyup="searchTable('inventory-table', this.value)">
                 <button class="btn btn-warning" onclick="showLowStock()">⚠️ Cảnh báo tồn kho</button>
-                <button class="btn btn-primary" onclick="showModal('update-inventory-modal')">🔄 Cập nhật tồn kho</button>
+                <button class="btn btn-primary" onclick="showModal('update-inventory-modal')">🔄 Cập nhật tồn
+                    kho</button>
             </div>
             <div class="table-container">
                 <table id="inventory-table">
@@ -458,12 +110,13 @@
                 </table>
             </div>
         </div>
-        
+
         <!-- Stock In -->
         <div id="stock-in" class="sheet">
             <div class="toolbar">
                 <button class="btn btn-success" onclick="showModal('add-stock-in-modal')">📥 Nhập kho</button>
-                <input type="text" class="search-box" placeholder="Tìm kiếm phiếu nhập..." onkeyup="searchTable('stock-in-table', this.value)">
+                <input type="text" class="search-box" placeholder="Tìm kiếm phiếu nhập..."
+                    onkeyup="searchTable('stock-in-table', this.value)">
             </div>
             <div class="table-container">
                 <table id="stock-in-table">
@@ -484,12 +137,13 @@
                 </table>
             </div>
         </div>
-        
+
         <!-- Stock Out -->
         <div id="stock-out" class="sheet">
             <div class="toolbar">
                 <button class="btn btn-danger" onclick="showModal('add-stock-out-modal')">📤 Xuất kho</button>
-                <input type="text" class="search-box" placeholder="Tìm kiếm phiếu xuất..." onkeyup="searchTable('stock-out-table', this.value)">
+                <input type="text" class="search-box" placeholder="Tìm kiếm phiếu xuất..."
+                    onkeyup="searchTable('stock-out-table', this.value)">
             </div>
             <div class="table-container">
                 <table id="stock-out-table">
@@ -509,12 +163,13 @@
                 </table>
             </div>
         </div>
-        
+
         <!-- Suppliers -->
         <div id="suppliers" class="sheet">
             <div class="toolbar">
                 <button class="btn btn-primary" onclick="showModal('add-supplier-modal')">🏢 Thêm NCC</button>
-                <input type="text" class="search-box" placeholder="Tìm nhà cung cấp..." onkeyup="searchTable('suppliers-table', this.value)">
+                <input type="text" class="search-box" placeholder="Tìm nhà cung cấp..."
+                    onkeyup="searchTable('suppliers-table', this.value)">
             </div>
             <div class="table-container">
                 <table id="suppliers-table">
@@ -533,7 +188,7 @@
                 </table>
             </div>
         </div>
-        
+
         <!-- Reports -->
         <div id="reports" class="sheet">
             <div class="toolbar">
@@ -580,7 +235,7 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Modals -->
     <!-- Add Product Modal -->
     <div id="add-product-modal" class="modal">
@@ -640,7 +295,7 @@
             </form>
         </div>
     </div>
-    
+
     <!-- Edit Product Modal -->
     <div id="edit-product-modal" class="modal">
         <div class="modal-content">
@@ -696,7 +351,7 @@
             </form>
         </div>
     </div>
-    
+
     <!-- Update Inventory Modal -->
     <div id="update-inventory-modal" class="modal">
         <div class="modal-content">
@@ -736,7 +391,7 @@
             </form>
         </div>
     </div>
-    
+
     <!-- Add Stock In Modal -->
     <div id="add-stock-in-modal" class="modal">
         <div class="modal-content">
@@ -781,7 +436,7 @@
             </form>
         </div>
     </div>
-    
+
     <!-- Edit Stock In Modal -->
     <div id="edit-stock-in-modal" class="modal">
         <div class="modal-content">
@@ -823,7 +478,7 @@
             </form>
         </div>
     </div>
-    
+
     <!-- Add Stock Out Modal -->
     <div id="add-stock-out-modal" class="modal">
         <div class="modal-content">
@@ -869,7 +524,7 @@
             </form>
         </div>
     </div>
-    
+
     <!-- Edit Stock Out Modal -->
     <div id="edit-stock-out-modal" class="modal">
         <div class="modal-content">
@@ -912,7 +567,7 @@
             </form>
         </div>
     </div>
-    
+
     <!-- Add Supplier Modal -->
     <div id="add-supplier-modal" class="modal">
         <div class="modal-content">
@@ -949,7 +604,7 @@
             </form>
         </div>
     </div>
-    
+
     <!-- Edit Supplier Modal -->
     <div id="edit-supplier-modal" class="modal">
         <div class="modal-content">
@@ -983,7 +638,7 @@
             </form>
         </div>
     </div>
-    
+
     <!-- Filter Report Modal -->
     <div id="filter-report-modal" class="modal">
         <div class="modal-content">
@@ -1017,1067 +672,7 @@
         </div>
     </div>
 
-    <script>
-        // Sample data
-        let products = [
-            {id: 'CF001', name: 'Cà phê Arabica', category: 'Cafe', unit: 'kg', supplier: 'NCC001'},
-            {id: 'CF002', name: 'Cà phê Robusta', category: 'Cafe', unit: 'kg', supplier: 'NCC001'},
-            {id: 'TR001', name: 'Trà xanh Thái Nguyên', category: 'Trà', unit: 'kg', supplier: 'NCC002'},
-            {id: 'BK001', name: 'Bánh croissant', category: 'Bánh ngọt', unit: 'cái', supplier: 'NCC003'},
-            {id: 'SU001', name: 'Đường trắng', category: 'Nguyên liệu', unit: 'kg', supplier: 'NCC004'}
-        ];
-        
-        let suppliers = [
-            {id: 'NCC001', name: 'Công ty Cà phê Highlands', contact: 'Nguyễn Văn A', phone: '0123456789', email: 'nva@highlands.vn', address: 'Hà Nội'},
-            {id: 'NCC002', name: 'Trà Thái Nguyên', contact: 'Trần Thị B', phone: '0987654321', email: 'ttb@trathan.vn', address: 'Thái Nguyên'},
-            {id: 'NCC003', name: 'Bánh ABC', contact: 'Lê Văn C', phone: '0369852147', email: 'lvc@banhabc.vn', address: 'TP.HCM'},
-            {id: 'NCC004', name: 'Nguyên liệu XYZ', contact: 'Phạm Thị D', phone: '0258147369', email: 'ptd@nlxyz.vn', address: 'Đà Nẵng'}
-        ];
-        
-        let inventory = [
-            {productId: 'CF001', currentStock: 50, minStock: 10, maxStock: 100, expiryDate: '2025-12-31', location: 'Kho A-01', lastUpdated: '2025-06-10'},
-            {productId: 'CF002', currentStock: 25, minStock: 15, maxStock: 80, expiryDate: '2025-11-30', location: 'Kho A-02', lastUpdated: '2025-06-10'},
-            {productId: 'TR001', currentStock: 8, minStock: 10, maxStock: 50, expiryDate: '2025-08-15', location: 'Kho B-01', lastUpdated: '2025-06-10'},
-            {productId: 'BK001', currentStock: 200, minStock: 50, maxStock: 300, expiryDate: '2025-06-20', location: 'Kho C-01', lastUpdated: '2025-06-10'},
-            {productId: 'SU001', currentStock: 45, minStock: 20, maxStock: 100, expiryDate: '2025-12-31', location: 'Kho D-01', lastUpdated: '2025-06-10'}
-        ];
-        
-        let stockIn = [
-            {receiptId: 'PN001', date: '2025-06-01', productId: 'CF001', quantity: 50, price: 180000, supplier: 'NCC001', notes: 'Hàng tươi từ Đắk Lắk'},
-            {receiptId: 'PN002', date: '2025-06-03', productId: 'TR001', quantity: 10, price: 300000, supplier: 'NCC002', notes: 'Trà cao cấp'},
-            {receiptId: 'PN003', date: '2025-06-05', productId: 'BK001', quantity: 100, price: 8000, supplier: 'NCC003', notes: 'Bánh tươi hàng ngày'}
-        ];
-        
-        let stockOut = [
-            {issueId: 'PX001', date: '2025-06-02', productId: 'CF001', quantity: 10, reason: 'Bán hàng', issuedBy: 'Nhân viên A', notes: 'Bán buổi sáng'},
-            {issueId: 'PX002', date: '2025-06-04', productId: 'TR001', quantity: 2, reason: 'Hư hỏng', issuedBy: 'Nhân viên B', notes: 'Bao bị rách'},
-            {issueId: 'PX003', date: '2025-06-06', productId: 'BK001', quantity: 20, reason: 'Bán hàng', issuedBy: 'Nhân viên C', notes: 'Khách đặt tiệc'}
-        ];
-        
-        // Initialize the application
-        document.addEventListener('DOMContentLoaded', function() {
-            loadSupplierOptions();
-            loadProductOptions();
-            renderAllTables();
-            updateDashboard();
-            updateReports();
-        });
-        
-        // Navigation functions
-        function showSheet(sheetId) {
-            // Hide all sheets
-            const sheets = document.querySelectorAll('.sheet');
-            sheets.forEach(sheet => sheet.classList.remove('active'));
-            
-            // Hide all tabs active state
-            const tabs = document.querySelectorAll('.tab');
-            tabs.forEach(tab => tab.classList.remove('active'));
-            
-            // Show selected sheet
-            document.getElementById(sheetId).classList.add('active');
-            
-            // Show selected tab as active
-            event.target.classList.add('active');
-            
-            // Update data when switching to certain sheets
-            if (sheetId === 'dashboard') {
-                updateDashboard();
-            } else if (sheetId === 'reports') {
-                updateReports();
-            }
-        }
-        
-        // Modal functions
-        function showModal(modalId) {
-            document.getElementById(modalId).style.display = 'block';
-        }
-        
-        function hideModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
-        }
-        
-        // Search function
-        function searchTable(tableId, searchValue) {
-            const table = document.getElementById(tableId);
-            const tbody = table.querySelector('tbody');
-            const rows = tbody.querySelectorAll('tr');
-            
-            rows.forEach(row => {
-                const text = row.textContent.toLowerCase();
-                if (text.includes(searchValue.toLowerCase())) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
-            });
-        }
-        
-        // Load options for dropdowns
-        function loadSupplierOptions() {
-            const selects = document.querySelectorAll('select[name="supplier"], select[name="editSupplier"], select[name="reportSupplier"]');
-            selects.forEach(select => {
-                select.innerHTML = '<option value="">Chọn NCC</option>';
-                suppliers.forEach(supplier => {
-                    const option = document.createElement('option');
-                    option.value = supplier.id;
-                    option.textContent = supplier.name;
-                    select.appendChild(option);
-                });
-            });
-        }
-        
-        function loadProductOptions() {
-            const selects = document.querySelectorAll('select[name="productId"], select[name="editProductId"], select[name="inventoryProduct"], select[name="reportProduct"]');
-            selects.forEach(select => {
-                select.innerHTML = '<option value="">Chọn sản phẩm</option>';
-                products.forEach(product => {
-                    const option = document.createElement('option');
-                    option.value = product.id;
-                    option.textContent = `${product.id} - ${product.name}`;
-                    select.appendChild(option);
-                });
-            });
-        }
-        
-        // Render table functions
-        function renderProductsTable() {
-            const tbody = document.querySelector('#products-table tbody');
-            tbody.innerHTML = '';
-            
-            products.forEach(product => {
-                const supplier = suppliers.find(s => s.id === product.supplier);
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${product.id}</td>
-                    <td>${product.name}</td>
-                    <td>${product.category}</td>
-                    <td>${product.unit}</td>
-                    <td>${supplier ? supplier.name : 'N/A'}</td>
-                    <td>
-                        <button class="btn btn-warning btn-sm" onclick="editProduct('${product.id}')">Sửa</button>
-                        <button class="btn btn-danger btn-sm" onclick="deleteProduct('${product.id}')">Xóa</button>
-                        </td>
-                        `;
-                        tbody.appendChild(row);
-                        // <td>${formatCurrency(product.costPrice)}</td>
-                        // <td>${formatCurrency(product.salePrice)}</td>
-            });
-        }
-        
-        function renderInventoryTable() {
-            const tbody = document.querySelector('#inventory-table tbody');
-            tbody.innerHTML = '';
-            
-            inventory.forEach(item => {
-                const product = products.find(p => p.id === item.productId);
-                const row = document.createElement('tr');
-                
-                // Check status
-                let statusClass = '';
-                let statusText = 'Bình thường';
-                
-                if (item.currentStock <= item.minStock) {
-                    statusClass = 'status-low';
-                    statusText = 'Tồn kho thấp';
-                }
-                
-                if (item.expiryDate) {
-                    const today = new Date();
-                    const expiry = new Date(item.expiryDate);
-                    const daysDiff = Math.ceil((expiry - today) / (1000 * 60 * 60 * 24));
-                    
-                    if (daysDiff < 0) {
-                        statusClass = 'status-expired';
-                        statusText = 'Đã hết hạn';
-                    } else if (daysDiff <= 7) {
-                        statusClass = 'status-warning';
-                        statusText = 'Sắp hết hạn';
-                    }
-                }
-                
-                row.className = statusClass;
-                row.innerHTML = `
-                    <td>${item.productId}</td>
-                    <td>${product ? product.name : 'N/A'}</td>
-                    <td>${item.currentStock}</td>
-                    <td>${item.minStock}</td>
-                    <td>${item.maxStock}</td>
-                    <td>${item.expiryDate || 'N/A'}</td>
-                    <td>${item.location}</td>
-                    <td>${statusText}</td>
-                    <td>
-                        <button class="btn btn-warning btn-sm" onclick="editInventory('${item.productId}')">Sửa</button>
-                    </td>
-                `;
-                tbody.appendChild(row);
-            });
-        }
-        
-        function renderStockInTable() {
-            const tbody = document.querySelector('#stock-in-table tbody');
-            tbody.innerHTML = '';
-            
-            stockIn.forEach(item => {
-                const product = products.find(p => p.id === item.productId);
-                const supplier = suppliers.find(s => s.id === item.supplier);
-                const total = item.quantity * item.price;
-                
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${item.receiptId}</td>
-                    <td>${item.date}</td>
-                    <td>${product ? product.name : 'N/A'}</td>
-                    <td>${item.quantity}</td>
-                    <td>${formatCurrency(item.price)}</td>
-                    <td>${formatCurrency(total)}</td>
-                    <td>${supplier ? supplier.name : 'N/A'}</td>
-                    <td>${item.notes || ''}</td>
-                    <td>
-                        <button class="btn btn-warning btn-sm" onclick="editStockIn('${item.receiptId}')">Sửa</button>
-                        <button class="btn btn-danger btn-sm" onclick="deleteStockIn('${item.receiptId}')">Xóa</button>
-                    </td>
-                `;
-                tbody.appendChild(row);
-            });
-        }
-        
-        function renderStockOutTable() {
-            const tbody = document.querySelector('#stock-out-table tbody');
-            tbody.innerHTML = '';
-            
-            stockOut.forEach(item => {
-                const product = products.find(p => p.id === item.productId);
-                
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${item.issueId}</td>
-                    <td>${item.date}</td>
-                    <td>${product ? product.name : 'N/A'}</td>
-                    <td>${item.quantity}</td>
-                    <td>${item.reason}</td>
-                    <td>${item.issuedBy}</td>
-                    <td>${item.notes || ''}</td>
-                    <td>
-                        <button class="btn btn-warning btn-sm" onclick="editStockOut('${item.issueId}')">Sửa</button>
-                        <button class="btn btn-danger btn-sm" onclick="deleteStockOut('${item.issueId}')">Xóa</button>
-                    </td>
-                `;
-                tbody.appendChild(row);
-            });
-        }
-        
-        function renderSuppliersTable() {
-            const tbody = document.querySelector('#suppliers-table tbody');
-            tbody.innerHTML = '';
-            
-            suppliers.forEach(supplier => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${supplier.id}</td>
-                    <td>${supplier.name}</td>
-                    <td>${supplier.contact}</td>
-                    <td>${supplier.phone}</td>
-                    <td>${supplier.email || ''}</td>
-                    <td>${supplier.address || ''}</td>
-                    <td>
-                        <button class="btn btn-warning btn-sm" onclick="editSupplier('${supplier.id}')">Sửa</button>
-                        <button class="btn btn-danger btn-sm" onclick="deleteSupplier('${supplier.id}')">Xóa</button>
-                    </td>
-                `;
-                tbody.appendChild(row);
-            });
-        }
-        
-        function renderReportTable(filter = {}) {
-            const tbody = document.querySelector('#report-table tbody');
-            tbody.innerHTML = '';
-            
-            // Filter data if needed
-            let filteredStockIn = [...stockIn];
-            let filteredStockOut = [...stockOut];
-            
-            if (filter.fromDate) {
-                filteredStockIn = filteredStockIn.filter(item => new Date(item.date) >= new Date(filter.fromDate));
-                filteredStockOut = filteredStockOut.filter(item => new Date(item.date) >= new Date(filter.fromDate));
-            }
-            
-            if (filter.toDate) {
-                filteredStockIn = filteredStockIn.filter(item => new Date(item.date) <= new Date(filter.toDate));
-                filteredStockOut = filteredStockOut.filter(item => new Date(item.date) <= new Date(filter.toDate));
-            }
-            
-            if (filter.productId) {
-                filteredStockIn = filteredStockIn.filter(item => item.productId === filter.productId);
-                filteredStockOut = filteredStockOut.filter(item => item.productId === filter.productId);
-            }
-            
-            if (filter.supplierId) {
-                filteredStockIn = filteredStockIn.filter(item => item.supplier === filter.supplierId);
-            }
-            
-            // Calculate report data
-            products.forEach(product => {
-                // Check if we should include this product based on filters
-                if (filter.productId && product.id !== filter.productId) return;
-                
-                const stockInForProduct = filteredStockIn.filter(item => item.productId === product.id);
-                const stockOutForProduct = filteredStockOut.filter(item => item.productId === product.id);
-                
-                const totalIn = stockInForProduct.reduce((sum, item) => sum + item.quantity, 0);
-                const totalOut = stockOutForProduct.reduce((sum, item) => sum + item.quantity, 0);
-                
-                const invItem = inventory.find(i => i.productId === product.id);
-                const currentStock = invItem ? invItem.currentStock : 0;
-                
-                // For demo purposes, we'll assume beginning stock is current stock + out - in
-                const beginningStock = currentStock + totalOut - totalIn;
-                const inventoryValue = currentStock * product.costPrice;
-                
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${product.name}</td>
-                    <td>${beginningStock}</td>
-                    <td>${totalIn}</td>
-                    <td>${totalOut}</td>
-                    <td>${currentStock}</td>
-                    <td>${formatCurrency(inventoryValue)}</td>
-                `;
-                tbody.appendChild(row);
-            });
-        }
-        
-        function renderAllTables() {
-            renderProductsTable();
-            renderInventoryTable();
-            renderStockInTable();
-            renderStockOutTable();
-            renderSuppliersTable();
-            renderReportTable();
-        }
-        
-        // Add functions
-        function addProduct(event) {
-            event.preventDefault();
-            const formData = new FormData(event.target);
-            
-            const product = {
-                id: formData.get('productId'),
-                name: formData.get('productName'),
-                category: formData.get('category'),
-                unit: formData.get('unit'),
-                costPrice: parseFloat(formData.get('costPrice')),
-                salePrice: parseFloat(formData.get('salePrice')),
-                supplier: formData.get('supplier')
-            };
-            
-            // Check if product ID already exists
-            if (products.find(p => p.id === product.id)) {
-                alert('Mã sản phẩm đã tồn tại!');
-                return;
-            }
-            
-            products.push(product);
-            
-            // Add to inventory with default values
-            inventory.push({
-                productId: product.id,
-                currentStock: 0,
-                minStock: 10,
-                maxStock: 100,
-                expiryDate: null,
-                location: 'Chưa phân bổ',
-                lastUpdated: new Date().toISOString().split('T')[0]
-            });
-            
-            renderAllTables();
-            loadProductOptions();
-            updateDashboard();
-            hideModal('add-product-modal');
-            event.target.reset();
-            alert('Thêm sản phẩm thành công!');
-        }
-        
-        function addStockIn(event) {
-            event.preventDefault();
-            const formData = new FormData(event.target);
-            
-            const stockInItem = {
-                receiptId: formData.get('receiptId'),
-                date: new Date().toISOString().split('T')[0],
-                productId: formData.get('productId'),
-                quantity: parseInt(formData.get('quantity')),
-                price: parseFloat(formData.get('price')),
-                supplier: formData.get('supplier'),
-                notes: formData.get('notes')
-            };
-            
-            // Check if receipt ID already exists
-            if (stockIn.find(s => s.receiptId === stockInItem.receiptId)) {
-                alert('Mã phiếu nhập đã tồn tại!');
-                return;
-            }
-            
-            stockIn.push(stockInItem);
-            
-            // Update inventory
-            const invItem = inventory.find(i => i.productId === stockInItem.productId);
-            if (invItem) {
-                invItem.currentStock += stockInItem.quantity;
-                invItem.lastUpdated = new Date().toISOString().split('T')[0];
-                
-                if (formData.get('expiryDate')) {
-                    invItem.expiryDate = formData.get('expiryDate');
-                }
-            }
-            
-            renderAllTables();
-            updateDashboard();
-            hideModal('add-stock-in-modal');
-            event.target.reset();
-            alert('Nhập kho thành công!');
-        }
-        
-        function addStockOut(event) {
-            event.preventDefault();
-            const formData = new FormData(event.target);
-            
-            const stockOutItem = {
-                issueId: formData.get('issueId'),
-                date: new Date().toISOString().split('T')[0],
-                productId: formData.get('productId'),
-                quantity: parseInt(formData.get('quantity')),
-                reason: formData.get('reason'),
-                issuedBy: formData.get('issuedBy'),
-                notes: formData.get('notes')
-            };
-            
-            // Check if issue ID already exists
-            if (stockOut.find(s => s.issueId === stockOutItem.issueId)) {
-                alert('Mã phiếu xuất đã tồn tại!');
-                return;
-            }
-            
-            // Check inventory availability
-            const invItem = inventory.find(i => i.productId === stockOutItem.productId);
-            if (!invItem || invItem.currentStock < stockOutItem.quantity) {
-                alert('Không đủ hàng trong kho!');
-                return;
-            }
-            
-            stockOut.push(stockOutItem);
-            
-            // Update inventory
-            invItem.currentStock -= stockOutItem.quantity;
-            invItem.lastUpdated = new Date().toISOString().split('T')[0];
-            
-            renderAllTables();
-            updateDashboard();
-            hideModal('add-stock-out-modal');
-            event.target.reset();
-            alert('Xuất kho thành công!');
-        }
-        
-        function addSupplier(event) {
-            event.preventDefault();
-            const formData = new FormData(event.target);
-            
-            const supplier = {
-                id: formData.get('supplierId'),
-                name: formData.get('companyName'),
-                contact: formData.get('contactPerson'),
-                phone: formData.get('phone'),
-                email: formData.get('email'),
-                address: formData.get('address')
-            };
-            
-            // Check if supplier ID already exists
-            if (suppliers.find(s => s.id === supplier.id)) {
-                alert('Mã nhà cung cấp đã tồn tại!');
-                return;
-            }
-            
-            suppliers.push(supplier);
-            renderSuppliersTable();
-            loadSupplierOptions();
-            hideModal('add-supplier-modal');
-            event.target.reset();
-            alert('Thêm nhà cung cấp thành công!');
-        }
-        
-        // Edit functions
-        function editProduct(productId) {
-            const product = products.find(p => p.id === productId);
-            if (!product) {
-                alert('Không tìm thấy sản phẩm!');
-                return;
-            }
-
-            // Fill the form
-            const form = document.querySelector('#edit-product-modal form');
-            form.querySelector('input[name="editProductId"]').value = product.id;
-            form.querySelector('input[name="editProductName"]').value = product.name;
-            form.querySelector('select[name="editCategory"]').value = product.category;
-            form.querySelector('select[name="editUnit"]').value = product.unit;
-            // form.querySelector('input[name="editCostPrice"]').value = product.costPrice;
-            // form.querySelector('input[name="editSalePrice"]').value = product.salePrice;
-            
-            // Load supplier options and select current supplier
-            const supplierSelect = form.querySelector('select[name="editSupplier"]');
-            supplierSelect.innerHTML = '<option value="">Chọn NCC</option>';
-            suppliers.forEach(supplier => {
-                const option = document.createElement('option');
-                option.value = supplier.id;
-                option.textContent = supplier.name;
-                supplierSelect.appendChild(option);
-            });
-            supplierSelect.value = product.supplier;
-
-            showModal('edit-product-modal');
-        }
-
-        function updateProduct(event) {
-            event.preventDefault();
-            const formData = new FormData(event.target);
-            const productId = formData.get('editProductId');
-
-            const updatedProduct = {
-                id: productId,
-                name: formData.get('editProductName'),
-                category: formData.get('editCategory'),
-                unit: formData.get('editUnit'),
-                costPrice: parseFloat(formData.get('editCostPrice')),
-                salePrice: parseFloat(formData.get('editSalePrice')),
-                supplier: formData.get('editSupplier')
-            };
-
-            // Update product
-            const index = products.findIndex(p => p.id === productId);
-            if (index !== -1) {
-                products[index] = updatedProduct;
-            }
-
-            renderAllTables();
-            loadProductOptions();
-            hideModal('edit-product-modal');
-            alert('Cập nhật sản phẩm thành công!');
-        }
-        
-        function editInventory(productId) {
-            const invItem = inventory.find(i => i.productId === productId);
-            if (!invItem) {
-                alert('Không tìm thấy tồn kho cho sản phẩm này!');
-                return;
-            }
-
-            // Fill the form
-            const form = document.querySelector('#update-inventory-modal form');
-            form.querySelector('input[name="inventoryProductId"]').value = invItem.productId;
-            
-            // Load product options and select current product
-            const productSelect = form.querySelector('select[name="inventoryProduct"]');
-            productSelect.innerHTML = '<option value="">Chọn sản phẩm</option>';
-            products.forEach(product => {
-                const option = document.createElement('option');
-                option.value = product.id;
-                option.textContent = `${product.id} - ${product.name}`;
-                productSelect.appendChild(option);
-            });
-            productSelect.value = invItem.productId;
-            
-            // Fill other fields
-            form.querySelector('input[name="currentStock"]').value = invItem.currentStock;
-            form.querySelector('input[name="minStock"]').value = invItem.minStock;
-            form.querySelector('input[name="maxStock"]').value = invItem.maxStock;
-            form.querySelector('input[name="expiryDate"]').value = invItem.expiryDate || '';
-            form.querySelector('input[name="location"]').value = invItem.location || '';
-
-            showModal('update-inventory-modal');
-        }
-
-        function updateInventoryItem(event) {
-            event.preventDefault();
-            const formData = new FormData(event.target);
-            const productId = formData.get('inventoryProductId');
-
-            const updatedInventory = {
-                productId: productId,
-                currentStock: parseInt(formData.get('currentStock')),
-                minStock: parseInt(formData.get('minStock')),
-                maxStock: parseInt(formData.get('maxStock')),
-                expiryDate: formData.get('expiryDate') || null,
-                location: formData.get('location') || 'Chưa phân bổ',
-                lastUpdated: new Date().toISOString().split('T')[0]
-            };
-
-            // Update inventory
-            const index = inventory.findIndex(i => i.productId === productId);
-            if (index !== -1) {
-                inventory[index] = updatedInventory;
-            }
-
-            renderAllTables();
-            updateDashboard();
-            hideModal('update-inventory-modal');
-            alert('Cập nhật tồn kho thành công!');
-        }
-        
-        function editStockIn(receiptId) {
-            const stockInItem = stockIn.find(s => s.receiptId === receiptId);
-            if (!stockInItem) {
-                alert('Không tìm thấy phiếu nhập kho!');
-                return;
-            }
-
-            // Fill the form
-            const form = document.querySelector('#edit-stock-in-modal form');
-            form.querySelector('input[name="editReceiptId"]').value = stockInItem.receiptId;
-            
-            // Load product options and select current product
-            const productSelect = form.querySelector('select[name="editProductId"]');
-            productSelect.innerHTML = '<option value="">Chọn sản phẩm</option>';
-            products.forEach(product => {
-                const option = document.createElement('option');
-                option.value = product.id;
-                option.textContent = `${product.id} - ${product.name}`;
-                productSelect.appendChild(option);
-            });
-            productSelect.value = stockInItem.productId;
-            
-            // Load supplier options and select current supplier
-            const supplierSelect = form.querySelector('select[name="editSupplier"]');
-            supplierSelect.innerHTML = '<option value="">Chọn NCC</option>';
-            suppliers.forEach(supplier => {
-                const option = document.createElement('option');
-                option.value = supplier.id;
-                option.textContent = supplier.name;
-                supplierSelect.appendChild(option);
-            });
-            supplierSelect.value = stockInItem.supplier;
-            
-            // Fill other fields
-            form.querySelector('input[name="editQuantity"]').value = stockInItem.quantity;
-            form.querySelector('input[name="editPrice"]').value = stockInItem.price;
-            form.querySelector('input[name="editExpiryDate"]').value = stockInItem.expiryDate || '';
-            form.querySelector('textarea[name="editNotes"]').value = stockInItem.notes || '';
-
-            showModal('edit-stock-in-modal');
-        }
-
-        function updateStockIn(event) {
-            event.preventDefault();
-            const formData = new FormData(event.target);
-            const receiptId = formData.get('editReceiptId');
-
-            const updatedStockIn = {
-                receiptId: receiptId,
-                date: new Date().toISOString().split('T')[0],
-                productId: formData.get('editProductId'),
-                quantity: parseInt(formData.get('editQuantity')),
-                price: parseFloat(formData.get('editPrice')),
-                supplier: formData.get('editSupplier'),
-                notes: formData.get('editNotes')
-            };
-
-            // Update stock in
-            const index = stockIn.findIndex(s => s.receiptId === receiptId);
-            if (index !== -1) {
-                // Calculate difference to update inventory
-                const oldQuantity = stockIn[index].quantity;
-                const newQuantity = updatedStockIn.quantity;
-                const diff = newQuantity - oldQuantity;
-                
-                stockIn[index] = updatedStockIn;
-                
-                // Update inventory
-                const invItem = inventory.find(i => i.productId === updatedStockIn.productId);
-                if (invItem) {
-                    invItem.currentStock += diff;
-                    invItem.lastUpdated = new Date().toISOString().split('T')[0];
-                    
-                    if (formData.get('editExpiryDate')) {
-                        invItem.expiryDate = formData.get('editExpiryDate');
-                    }
-                }
-            }
-
-            renderAllTables();
-            updateDashboard();
-            hideModal('edit-stock-in-modal');
-            alert('Cập nhật phiếu nhập kho thành công!');
-        }
-        
-        function editStockOut(issueId) {
-            const stockOutItem = stockOut.find(s => s.issueId === issueId);
-            if (!stockOutItem) {
-                alert('Không tìm thấy phiếu xuất kho!');
-                return;
-            }
-
-            // Fill the form
-            const form = document.querySelector('#edit-stock-out-modal form');
-            form.querySelector('input[name="editIssueId"]').value = stockOutItem.issueId;
-            
-            // Load product options and select current product
-            const productSelect = form.querySelector('select[name="editProductId"]');
-            productSelect.innerHTML = '<option value="">Chọn sản phẩm</option>';
-            products.forEach(product => {
-                const option = document.createElement('option');
-                option.value = product.id;
-                option.textContent = `${product.id} - ${product.name}`;
-                productSelect.appendChild(option);
-            });
-            productSelect.value = stockOutItem.productId;
-            
-            // Fill other fields
-            form.querySelector('input[name="editQuantity"]').value = stockOutItem.quantity;
-            form.querySelector('select[name="editReason"]').value = stockOutItem.reason;
-            form.querySelector('input[name="editIssuedBy"]').value = stockOutItem.issuedBy;
-            form.querySelector('textarea[name="editNotes"]').value = stockOutItem.notes || '';
-
-            showModal('edit-stock-out-modal');
-        }
-
-        function updateStockOut(event) {
-            event.preventDefault();
-            const formData = new FormData(event.target);
-            const issueId = formData.get('editIssueId');
-
-            const updatedStockOut = {
-                issueId: issueId,
-                date: new Date().toISOString().split('T')[0],
-                productId: formData.get('editProductId'),
-                quantity: parseInt(formData.get('editQuantity')),
-                reason: formData.get('editReason'),
-                issuedBy: formData.get('editIssuedBy'),
-                notes: formData.get('editNotes')
-            };
-
-            // Update stock out
-            const index = stockOut.findIndex(s => s.issueId === issueId);
-            if (index !== -1) {
-                // Calculate difference to update inventory
-                const oldQuantity = stockOut[index].quantity;
-                const newQuantity = updatedStockOut.quantity;
-                const diff = newQuantity - oldQuantity;
-                
-                stockOut[index] = updatedStockOut;
-                
-                // Update inventory
-                const invItem = inventory.find(i => i.productId === updatedStockOut.productId);
-                if (invItem) {
-                    invItem.currentStock -= diff; // Subtract the difference
-                    invItem.lastUpdated = new Date().toISOString().split('T')[0];
-                }
-            }
-
-            renderAllTables();
-            updateDashboard();
-            hideModal('edit-stock-out-modal');
-            alert('Cập nhật phiếu xuất kho thành công!');
-        }
-        
-        function editSupplier(supplierId) {
-            const supplier = suppliers.find(s => s.id === supplierId);
-            if (!supplier) {
-                alert('Không tìm thấy nhà cung cấp!');
-                return;
-            }
-
-            // Fill the form
-            const form = document.querySelector('#edit-supplier-modal form');
-            form.querySelector('input[name="editSupplierId"]').value = supplier.id;
-            form.querySelector('input[name="editCompanyName"]').value = supplier.name;
-            form.querySelector('input[name="editContactPerson"]').value = supplier.contact;
-            form.querySelector('input[name="editPhone"]').value = supplier.phone;
-            form.querySelector('input[name="editEmail"]').value = supplier.email || '';
-            form.querySelector('textarea[name="editAddress"]').value = supplier.address || '';
-
-            showModal('edit-supplier-modal');
-        }
-
-        function updateSupplier(event) {
-            event.preventDefault();
-            const formData = new FormData(event.target);
-            const supplierId = formData.get('editSupplierId');
-
-            const updatedSupplier = {
-                id: supplierId,
-                name: formData.get('editCompanyName'),
-                contact: formData.get('editContactPerson'),
-                phone: formData.get('editPhone'),
-                email: formData.get('editEmail'),
-                address: formData.get('editAddress')
-            };
-
-            // Update supplier
-            const index = suppliers.findIndex(s => s.id === supplierId);
-            if (index !== -1) {
-                suppliers[index] = updatedSupplier;
-            }
-
-            // Update supplier name in related products
-            products.forEach(product => {
-                if (product.supplier === supplierId) {
-                    product.supplierName = updatedSupplier.name;
-                }
-            });
-
-            renderAllTables();
-            loadSupplierOptions();
-            hideModal('edit-supplier-modal');
-            alert('Cập nhật nhà cung cấp thành công!');
-        }
-        
-        // Delete functions
-        function deleteProduct(productId) {
-            if (confirm(`Bạn có chắc chắn muốn xóa sản phẩm ${productId}?`)) {
-                // Check if product exists in inventory with stock
-                const invItem = inventory.find(i => i.productId === productId);
-                if (invItem && invItem.currentStock > 0) {
-                    alert('Không thể xóa sản phẩm vì vẫn còn tồn kho!');
-                    return;
-                }
-                
-                // Check if product is referenced in stock in/out
-                const hasStockIn = stockIn.some(s => s.productId === productId);
-                const hasStockOut = stockOut.some(s => s.productId === productId);
-                
-                if (hasStockIn || hasStockOut) {
-                    alert('Không thể xóa sản phẩm vì có liên quan đến phiếu nhập/xuất kho!');
-                    return;
-                }
-                
-                products = products.filter(p => p.id !== productId);
-                inventory = inventory.filter(i => i.productId !== productId);
-                renderAllTables();
-                loadProductOptions();
-                updateDashboard();
-                alert('Xóa sản phẩm thành công!');
-            }
-        }
-        
-        function deleteStockIn(receiptId) {
-            if (confirm(`Bạn có chắc chắn muốn xóa phiếu nhập ${receiptId}?`)) {
-                const stockInItem = stockIn.find(s => s.receiptId === receiptId);
-                if (stockInItem) {
-                    // Update inventory (subtract the quantity)
-                    const invItem = inventory.find(i => i.productId === stockInItem.productId);
-                    if (invItem) {
-                        invItem.currentStock -= stockInItem.quantity;
-                    }
-                    
-                    // Delete stock in
-                    stockIn = stockIn.filter(s => s.receiptId !== receiptId);
-                    
-                    renderAllTables();
-                    updateDashboard();
-                    alert('Xóa phiếu nhập thành công!');
-                }
-            }
-        }
-        
-        function deleteStockOut(issueId) {
-            if (confirm(`Bạn có chắc chắn muốn xóa phiếu xuất ${issueId}?`)) {
-                const stockOutItem = stockOut.find(s => s.issueId === issueId);
-                if (stockOutItem) {
-                    // Update inventory (add back the quantity)
-                    const invItem = inventory.find(i => i.productId === stockOutItem.productId);
-                    if (invItem) {
-                        invItem.currentStock += stockOutItem.quantity;
-                    }
-                    
-                    // Delete stock out
-                    stockOut = stockOut.filter(s => s.issueId !== issueId);
-                    
-                    renderAllTables();
-                    updateDashboard();
-                    alert('Xóa phiếu xuất thành công!');
-                }
-            }
-        }
-        
-        function deleteSupplier(supplierId) {
-            if (confirm(`Bạn có chắc chắn muốn xóa nhà cung cấp ${supplierId}?`)) {
-                // Check if supplier is referenced in products
-                const hasProducts = products.some(p => p.supplier === supplierId);
-                const hasStockIn = stockIn.some(s => s.supplier === supplierId);
-                
-                if (hasProducts || hasStockIn) {
-                    alert('Không thể xóa nhà cung cấp vì có sản phẩm hoặc phiếu nhập liên quan!');
-                    return;
-                }
-                
-                suppliers = suppliers.filter(s => s.id !== supplierId);
-                renderSuppliersTable();
-                loadSupplierOptions();
-                alert('Xóa nhà cung cấp thành công!');
-            }
-        }
-        
-        // Dashboard functions
-        function updateDashboard() {
-            // Total products
-            document.getElementById('total-products').textContent = products.length;
-            
-            // Total inventory value
-            let totalValue = 0;
-            inventory.forEach(item => {
-                const product = products.find(p => p.id === item.productId);
-                if (product) {
-                    totalValue += item.currentStock * product.costPrice;
-                }
-            });
-            document.getElementById('total-value').textContent = formatCurrency(totalValue);
-            
-            // Low stock items
-            const lowStockItems = inventory.filter(item => item.currentStock <= item.minStock);
-            document.getElementById('low-stock').textContent = lowStockItems.length;
-            
-            // Expiring soon
-            const today = new Date();
-            const expiringSoon = inventory.filter(item => {
-                if (!item.expiryDate) return false;
-                const expiry = new Date(item.expiryDate);
-                const daysDiff = Math.ceil((expiry - today) / (1000 * 60 * 60 * 24));
-                return daysDiff >= 0 && daysDiff <= 7;
-            });
-            document.getElementById('expiring-soon').textContent = expiringSoon.length;
-            
-            // Show alerts
-            showAlerts(lowStockItems, expiringSoon);
-        }
-        
-        function showAlerts(lowStockItems, expiringSoon) {
-            const alertsDiv = document.getElementById('alerts');
-            const alertsList = document.getElementById('alert-list');
-            
-            if (lowStockItems.length === 0 && expiringSoon.length === 0) {
-                alertsDiv.style.display = 'none';
-                return;
-            }
-            
-            alertsList.innerHTML = '';
-            
-            lowStockItems.forEach(item => {
-                const product = products.find(p => p.id === item.productId);
-                const li = document.createElement('li');
-                li.textContent = `${product ? product.name : item.productId}: Tồn kho thấp (${item.currentStock}/${item.minStock})`;
-                alertsList.appendChild(li);
-            });
-            
-            expiringSoon.forEach(item => {
-                const product = products.find(p => p.id === item.productId);
-                const li = document.createElement('li');
-                li.textContent = `${product ? product.name : item.productId}: Sắp hết hạn (${item.expiryDate})`;
-                alertsList.appendChild(li);
-            });
-            
-            alertsDiv.style.display = 'block';
-        }
-        
-        // Reports functions
-        function updateReports() {
-            const currentMonth = new Date().getMonth();
-            const currentYear = new Date().getFullYear();
-            
-            // Monthly stock in
-            const monthlyStockIn = stockIn.filter(item => {
-                const itemDate = new Date(item.date);
-                return itemDate.getMonth() === currentMonth && itemDate.getFullYear() === currentYear;
-            });
-            document.getElementById('monthly-stock-in').textContent = monthlyStockIn.length;
-            
-            // Monthly stock out
-            const monthlyStockOut = stockOut.filter(item => {
-                const itemDate = new Date(item.date);
-                return itemDate.getMonth() === currentMonth && itemDate.getFullYear() === currentYear;
-            });
-            document.getElementById('monthly-stock-out').textContent = monthlyStockOut.length;
-            
-            // Top product (most stock out)
-            const productCounts = {};
-            stockOut.forEach(item => {
-                productCounts[item.productId] = (productCounts[item.productId] || 0) + item.quantity;
-            });
-            
-            const topProductId = Object.keys(productCounts).reduce((a, b) => 
-                productCounts[a] > productCounts[b] ? a : b, Object.keys(productCounts)[0]);
-            
-            const topProduct = products.find(p => p.id === topProductId);
-            document.getElementById('top-product').textContent = topProduct ? topProduct.name : '-';
-            
-            // Top supplier
-            const supplierCounts = {};
-            stockIn.forEach(item => {
-                supplierCounts[item.supplier] = (supplierCounts[item.supplier] || 0) + 1;
-            });
-            
-            const topSupplierId = Object.keys(supplierCounts).reduce((a, b) => 
-                supplierCounts[a] > supplierCounts[b] ? a : b, Object.keys(supplierCounts)[0]);
-            
-            const topSupplier = suppliers.find(s => s.id === topSupplierId);
-            document.getElementById('top-supplier').textContent = topSupplier ? topSupplier.name : '-';
-            
-            // Render report table
-            renderReportTable();
-        }
-        
-        function filterReport(event) {
-            event.preventDefault();
-            const formData = new FormData(event.target);
-            
-            const filter = {
-                fromDate: formData.get('fromDate'),
-                toDate: formData.get('toDate'),
-                productId: formData.get('reportProduct'),
-                supplierId: formData.get('reportSupplier')
-            };
-            
-            renderReportTable(filter);
-            hideModal('filter-report-modal');
-        }
-        
-        // Utility functions
-        function formatCurrency(amount) {
-            return new Intl.NumberFormat('vi-VN', {
-                style: 'currency',
-                currency: 'VND'
-            }).format(amount);
-        }
-        
-        function showLowStock() {
-            const lowStockItems = inventory.filter(item => item.currentStock <= item.minStock);
-            if (lowStockItems.length === 0) {
-                alert('Không có sản phẩm nào có tồn kho thấp!');
-                return;
-            }
-            
-            let message = 'Các sản phẩm có tồn kho thấp:\n\n';
-            lowStockItems.forEach(item => {
-                const product = products.find(p => p.id === item.productId);
-                message += `- ${product ? product.name : item.productId}: ${item.currentStock}/${item.minStock}\n`;
-            });
-            
-            alert(message);
-        }
-        
-        function exportExcel() {
-            alert('Chức năng xuất Excel sẽ được phát triển trong phiên bản tiếp theo!');
-        }
-        
-        function generateReport() {
-            alert('Chức năng tạo báo cáo chi tiết sẽ được phát triển trong phiên bản tiếp theo!');
-        }
-        
-        // Close modal when clicking outside
-        window.onclick = function(event) {
-            const modals = document.querySelectorAll('.modal');
-            modals.forEach(modal => {
-                if (event.target === modal) {
-                    modal.style.display = 'none';
-                }
-            });
-        }
-    </script>
+    <script src="script.js"></script>
 </body>
+
 </html>
